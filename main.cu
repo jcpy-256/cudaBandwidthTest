@@ -95,7 +95,10 @@ int main() {
     int repeat = 200;
     int data_size = 48 * prop.l2CacheSize / (sizeof(double));
     data_size = (data_size + blocksize -1) / blocksize * blocksize;
-    printf("the data size is %lf MB\n", data_size * sizeof(double) * 1.0 / 1024 /1024);
+    double total_bytes = (double)data_size * (sizeof(double) + sizeof(int));
+    double total_MB = total_bytes / 1024 / 1024;
+
+    printf("the total bytes is %.2f B (%.2f MB)\n", total_bytes, total_MB);
     std::cout.flush();
 
     // 2. 分配内存
@@ -127,13 +130,14 @@ int main() {
 
     double average_msec = msec / repeat;
 
-    double randomAcessBandwidth = (data_size * sizeof(double) * 1.0 / 1.0e6) / (average_msec);
+    // double data_volume_MB = total_bytes / 1.0e6;
+
+    double randomAcessBandwidth = total_MB / (average_msec);
     
-    double data_volume_MB = data_size * sizeof(double) / 1.0e6;
     printf("\n");
     printf("==================== Benchmark Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",      repeat);
-    printf("%-25s : %.2f MB\n",  "Data Volume",     data_volume_MB);
+    printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
     printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec);
     printf("%-25s : %.2f GB/s\n", "Avg Bandwidth",    randomAcessBandwidth);
     printf("-----------------------------------------------------------\n");
@@ -159,14 +163,14 @@ int main() {
 
     double average_msec_sequential = msec / repeat;
 
-    double sequentialBandwidth = (data_size * sizeof(double) * 1.0 / 1.0e6) / (average_msec_sequential);
+    double sequentialBandwidth = total_MB / (average_msec_sequential);
     
-    double data_volume_sequential_MB = data_size * sizeof(double) / 1.0e6;
+    // double data_volume_sequential_MB = data_size *  (sizeof(double) + sizeof(int)) / 1.0e6;
 
     printf("\n");
     printf("====================  Benchmark Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",       repeat);
-    printf("%-25s : %.2f MB\n",  "Data Volume",     data_volume_sequential_MB);
+    printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
     printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_sequential);
     printf("%-25s : %.2f GB/s\n", "Avg Bandwidth",     sequentialBandwidth); 
     printf("-----------------------------------------------------------\n");
