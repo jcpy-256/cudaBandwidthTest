@@ -102,7 +102,8 @@ int main() {
     int data_size = 48 * prop.l2CacheSize / (sizeof(double));
     data_size = (data_size + blocksize -1) / blocksize * blocksize;
     double total_bytes = (double)data_size * (sizeof(double) + sizeof(int));
-    double total_MB = total_bytes / 1024 / 1024;
+    double total_MB = (double)data_size * (sizeof(double) + sizeof(int)) / 1e6;
+    double totalData_MB = (double)data_size * sizeof(double) / 1e6;
 
     printf("the total bytes is %.2f B (%.2f MB)\n", total_bytes, total_MB);
     std::cout.flush();
@@ -169,14 +170,14 @@ int main() {
 
     double average_msec_read = msec / repeat;
 
-    double readBandwidth = total_MB / (average_msec_read);
+    double readBandwidth = totalData_MB / (average_msec_read);
     
     // double data_volume_sequential_MB = data_size *  (sizeof(double) + sizeof(int)) / 1.0e6;
 
     printf("\n");
     printf("====================  Benchmark Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",       repeat);
-    printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
+    printf("%-25s : %.2f MB\n",  "Data Volume",     totalData_MB);
     printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_read);
     printf("%-25s : %.2f GB/s\n", "Avg Read Bandwidth",     readBandwidth); 
     printf("-----------------------------------------------------------\n");
@@ -202,14 +203,14 @@ int main() {
 
     double average_msec_write = msec / repeat;
 
-    double writeBandwidth = total_MB / (average_msec_write);
+    double writeBandwidth = totalData_MB / (average_msec_write);
     
     // double data_volume_write_MB = data_size *  (sizeof(double) + sizeof(int)) / 1.0e6;
 
     printf("\n");
     printf("====================  Benchmark Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",       repeat);
-    printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
+    printf("%-25s : %.2f MB\n",  "Data Volume",     totalData_MB);
     printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_write);
     printf("%-25s : %.2f GB/s\n", "Avg Bandwidth",     writeBandwidth); 
     printf("-----------------------------------------------------------\n");
