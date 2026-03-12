@@ -53,6 +53,12 @@ __global__ void continue_read_kernel(double*  data, int n) {
     double val = *(const volatile double*)&data[i]; // 关键：随机读取
 }
 
+__global__ void continue_write_kernel(double* data, int n, double val)
+{
+    int i = blockIdx.x * blockDim.x + threadIdx.x;
+    data[i] = val;
+}
+
 
 /**
  * generate indices
@@ -135,7 +141,7 @@ int main() {
     double randomAcessBandwidth = total_MB / (average_msec);
     
     printf("\n");
-    printf("==================== Benchmark Results ====================\n");
+    printf("==================== Benchmark  Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",      repeat);
     printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
     printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec);
@@ -147,7 +153,7 @@ int main() {
     printf("\n");
 
 
-    /** ***************************** continume access ****************************************/
+    /** ***************************** continume read ****************************************/
     CHECK_CUDA(cudaDeviceSynchronize());
     cudaEventRecord(start);
     for(int i=0; i< repeat; i++)
@@ -161,9 +167,9 @@ int main() {
 
     CHECK_CUDA(cudaGetLastError());
 
-    double average_msec_sequential = msec / repeat;
+    double average_msec_read = msec / repeat;
 
-    double sequentialBandwidth = total_MB / (average_msec_sequential);
+    double readBandwidth = total_MB / (average_msec_read);
     
     // double data_volume_sequential_MB = data_size *  (sizeof(double) + sizeof(int)) / 1.0e6;
 
@@ -171,13 +177,47 @@ int main() {
     printf("====================  Benchmark Results ====================\n");
     printf("%-25s : %d\n",       "Iterations",       repeat);
     printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
-    printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_sequential);
-    printf("%-25s : %.2f GB/s\n", "Avg Bandwidth",     sequentialBandwidth); 
+    printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_read);
+    printf("%-25s : %.2f GB/s\n", "Avg Read Bandwidth",     readBandwidth); 
     printf("-----------------------------------------------------------\n");
     printf("Hardware Device           : RTX 5060 Ti\n"); 
-    printf("Access Pattern            : Sequential (Coalesced)\n"); // 强调合并访问
+    printf("Access Pattern            : Sequential Read (Coalesced)\n"); // 强调合并访问
     printf("===========================================================\n");
     printf("\n");
+
+
+    /** ***************************** continume write ****************************************/
+    CHECK_CUDA(cudaDeviceSynchronize());
+    cudaEventRecord(start);
+    for(int i=0; i< repeat; i++)
+    {
+        continue_write_kernel<<<gridsize, blocksize>>>(d_input, data_size, i * 1.0);
+        // printf("the repeat is %d\n", i);
+    }
+    cudaEventRecord(stop);
+    CHECK_CUDA(cudaEventSynchronize(stop));
+    cudaEventElapsedTime(&msec, start, stop);
+
+    CHECK_CUDA(cudaGetLastError());
+
+    double average_msec_write = msec / repeat;
+
+    double writeBandwidth = total_MB / (average_msec_write);
+    
+    // double data_volume_write_MB = data_size *  (sizeof(double) + sizeof(int)) / 1.0e6;
+
+    printf("\n");
+    printf("====================  Benchmark Results ====================\n");
+    printf("%-25s : %d\n",       "Iterations",       repeat);
+    printf("%-25s : %.2f MB\n",  "Data Volume",     total_MB);
+    printf("%-25s : %.4f ms\n",  "Avg Execution Time", average_msec_write);
+    printf("%-25s : %.2f GB/s\n", "Avg Bandwidth",     writeBandwidth); 
+    printf("-----------------------------------------------------------\n");
+    printf("Hardware Device           : RTX 5060 Ti\n"); 
+    printf("Access Pattern            : Sequential Write (Coalesced)\n"); // 强调合并访问
+    printf("===========================================================\n");
+    printf("\n");
+
 
 
 
