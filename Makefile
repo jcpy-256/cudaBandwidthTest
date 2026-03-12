@@ -1,5 +1,5 @@
 # cuda path
-CUDA_PATH = /usr/local/cuda-13.1
+CUDA_PATH = /usr/local/cuda/
 
 # compiler
 NVCC := $(CUDA_PATH)/bin/nvcc
@@ -10,10 +10,10 @@ TARGET := cudaBandwidthTest
 SRC := main.cu
 
 # options
-NVCC_FLAGS := -O3 -std=c++17 -Xcompiler -Wall
+NVCC_FLAGS := -O2 -std=c++17 -Xcompiler -Wall
 
-GENCODE_FLAGS := -gencode arch=compute_120,code=sm_120 \
-                 -gencode arch=compute_120,code=compute_120
+GENCODE_FLAGS := -gencode arch=compute_89,code=sm_89 \
+                 -gencode arch=compute_89,code=compute_89
 
 
 all: $(TARGET)

@@ -1,0 +1,38 @@
+Device Name: NVIDIA GeForce RTX 4090
+L2 Cache Size: 72 MB
+Shared Memory per SM: 100 KB
+Memory Bus Width: 384 bit
+the total bytes is 21969764352.00 B (21969.76 MB)
+
+==================== Benchmark  Results ====================
+Iterations                : 100
+Data Volume               : 21969.76 MB
+Avg Execution Time        : 237.1738 ms
+Avg Bandwidth             : 92.63 GB/s
+-----------------------------------------------------------
+Hardware Device           : NVIDIA GeForce RTX 4090
+Access Pattern            : Worst Indirect Access
+===========================================================
+
+
+====================  Benchmark Results ====================
+Iterations                : 100
+Data Volume               : 14646.51 MB
+Avg Execution Time        : 15.2453 ms
+Avg Read Bandwidth        : 960.72 GB/s
+-----------------------------------------------------------
+Hardware Device           : NVIDIA GeForce RTX 4090
+Access Pattern            : Sequential Read (Coalesced)
+===========================================================
+
+
+====================  Benchmark Results ====================
+Iterations                : 100
+Data Volume               : 14646.51 MB
+Avg Execution Time        : 15.2653 ms
+Avg Bandwidth             : 959.46 GB/s
+-----------------------------------------------------------
+Hardware Device           : NVIDIA GeForce RTX 4090
+Access Pattern            : Sequential Write (Coalesced)
+===========================================================
+
